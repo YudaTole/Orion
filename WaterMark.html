@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orion Myth Generator</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #1a1a1a; color: white; margin: 0; padding: 20px; }
+        
+        /* Judul & Sub-judul */
+        h3 { color: #ff4757; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .sub-wm { color: #ffffff; font-style: italic; font-size: 18px; margin-top: 0; margin-bottom: 20px; opacity: 0.9; }
+
+        /* Preview Canvas */
+        .preview-container { margin-bottom: 20px; }
+        canvas { border: 1px solid #555; max-width: 100%; border-radius: 10px; background: #000; }
+
+        /* Kontrol */
+        .controls { display: flex; flex-direction: column; gap: 12px; align-items: center; margin-top: 10px; }
+        input { padding: 12px; width: 100%; max-width: 320px; border-radius: 8px; border: 1px solid #444; background: #222; color: white; text-align: center; font-size: 14px; }
+        
+        .bg-btns { display: flex; gap: 8px; margin: 5px 0; }
+        .bg-btns label { font-size: 13px; cursor: pointer; background: #333; padding: 10px 15px; border-radius: 6px; border: 1px solid #444; }
+        .bg-btns input { display: none; }
+        .bg-btns label:has(input:checked) { background: #ff4757; border-color: #ff4757; font-weight: bold; }
+
+        button { padding: 15px; background: #ff4757; color: white; border: none; cursor: pointer; border-radius: 10px; font-weight: bold; width: 100%; max-width: 320px; font-size: 14px; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+
+    <h3>ORION GENERATOR</h3>
+    <p class="sub-wm">WaterMark</p>
+
+    <div class="preview-container">
+        <canvas id="myCanvas" width="1000" height="1000"></canvas>
+    </div>
+
+    <div class="controls">
+        <input type="text" id="username" placeholder="@username" value="@om.yudz1" oninput="draw()">
+        
+        <div style="display: flex; gap: 10px; width: 100%; max-width: 320px;">
+            <input type="text" id="period" placeholder="AM" value="AM" oninput="draw()">
+            <input type="text" id="time" placeholder="9:16" value="9:16" oninput="draw()">
+        </div>
+
+        <div class="bg-btns">
+            <label><input type="radio" name="bg" value="black" checked onchange="draw()"> HITAM</label>
+            <label><input type="radio" name="bg" value="green" onchange="draw()"> HIJAU</label>
+            <label><input type="radio" name="bg" value="transparent" onchange="draw()"> TRANSPARAN</label>
+        </div>
+
+        <button onclick="downloadImage()">Download Gambar</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+
+        img.crossOrigin = "anonymous";
+        img.src = 'https://raw.githubusercontent.com/YudaTole/My-Data/d4145aef74005deaa36857c59525abf16c325d10/Proyek%20Baru%20291%20%5B6032635%5D.png'; 
+
+        img.onload = function() { draw(); };
+
+        function draw() {
+            const bgType = document.querySelector('input[name="bg"]:checked').value;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (bgType === "black") {
+                ctx.fillStyle = "black";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            } else {
+                if (bgType === "green") {
+                    ctx.fillStyle = "#00FF00";
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                }
+                ctx.globalCompositeOperation = "screen";
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                ctx.globalCompositeOperation = "source-over";
+            }
+
+            // Teks Watermark di dalam gambar (tetap ada di posisi tengah)
+            ctx.font = "bold 35px Arial"; 
+            ctx.fillStyle = "white";
+            ctx.textAlign = "center";
+
+            const user = document.getElementById('username').value || "@username";
+            const period = document.getElementById('period').value || "AM";
+            const time = document.getElementById('time').value || "9:16";
+            const fullText = user + " • " + period + " • " + time;
+
+            ctx.fillText(fullText, canvas.width / 2, 685);
+        }
+
+        function downloadImage() {
+            const link = document.createElement('a');
+            link.download = 'OrionMyth_WaterMark.png';
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+        }
+    </script>
+</body>
+</html>
